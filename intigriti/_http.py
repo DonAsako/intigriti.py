@@ -184,9 +184,9 @@ class AsyncHTTPClient:
         """Fetch raw bytes from an absolute URL (e.g. a rules-of-engagement attachment).
 
         Absolute URLs bypass the versioned base prefix configured on the underlying
-        httpx client. Attachments are served from a different host than the API, so
-        the ``Authorization`` header is dropped for off-host URLs: the personal access
-        token must never leak to a third-party storage provider.
+        httpx client. The ``Authorization`` header is dropped when the URL points
+        outside the API host, so that the personal access token never leaks to a
+        third-party storage provider.
         """
         request = self._client.build_request('GET', url)
         if request.url.host != self._client.base_url.host:

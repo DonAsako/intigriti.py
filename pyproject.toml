@@ -197,6 +197,11 @@ select = [
 docstring-quotes = "double"
 inline-quotes    = "single"
 
+[tool.ruff.lint.flake8-type-checking]
+# Pydantic resolves annotations at runtime to build its validators, so the types its
+# models reference must stay imported at module level rather than under TYPE_CHECKING.
+runtime-evaluated-base-classes = ["pydantic.BaseModel", "intigriti.models._base.IntigritiModel"]
+
 [tool.ruff.lint.pycodestyle]
 max-doc-length                = 160
 ignore-overlong-task-comments = true
@@ -272,6 +277,8 @@ allow-magic-value-types = ["int", "str", "bytes"]
 
 [tool.mypy]
 python_version     = "3.13"
+# Type-checks model constructors and honours frozen models
+plugins            = ["pydantic.mypy"]
 files              = ["intigriti", "tests"]
 namespace_packages = true
 pretty             = true
@@ -300,6 +307,11 @@ exclude = [
     "/__pycache__/",
     "^setup\\.py$",
 ]
+
+[tool.pydantic-mypy]
+init_typed           = true
+init_forbid_extra    = true
+warn_untyped_fields  = true
 
 # Tests: relax a bit (untyped fixtures, parametrize, etc.)
 [[tool.mypy.overrides]]

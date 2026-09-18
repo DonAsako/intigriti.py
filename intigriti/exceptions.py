@@ -1,7 +1,7 @@
 """Exception hierarchy mapping the Intigriti API fault contract to Python errors.
 
 Every failed request raises an :class:`IntigritiAPIError` subclass carrying the HTTP
-status, the API error code and the correlation identifier returned by the server.
+status, plus the error code and identifier when the response body provides them.
 
 See https://intigriti-researcher-api.readme.io/reference/errors.
 """
@@ -23,7 +23,8 @@ class IntigritiAPIError(IntigritiError):
         status_code: HTTP status code returned by the server.
         message: Human-readable error message extracted from the response body.
         code: Intigriti error code identifying the failure, e.g. ``UNAUTH001``.
-        identifier: Correlation id of the failed request; quote it when contacting support.
+        identifier: Identifier the API assigns to the failed request; include it when
+            reporting the problem to Intigriti.
         extra_parameters: Additional per-error context, when the API returns some.
         payload: Raw decoded response body, when available.
     """
@@ -65,9 +66,9 @@ class IntigritiRateLimitError(IntigritiPermissionError):
 
     Intigriti signals rate limiting with HTTP 403 rather than 429, hence the
     inheritance from :class:`IntigritiPermissionError`: handlers that catch
-    permission errors keep working. It is only raised when the response carries a
-    ``Retry-After`` header, since a throttled 403 is otherwise indistinguishable
-    from an ordinary one.
+    permission errors keep working. An HTTP 429 always maps here; a 403 only does
+    when the response carries a ``Retry-After`` header, since a throttled 403 is
+    otherwise indistinguishable from an ordinary one.
 
     Attributes:
         retry_after: Seconds to wait before retrying, when the server sends a delay.
