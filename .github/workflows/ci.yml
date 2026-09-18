@@ -6,6 +6,8 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  # Called by the release workflow so a release can never ship unchecked code.
+  workflow_call:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

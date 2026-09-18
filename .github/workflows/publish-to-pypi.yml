@@ -1,0 +1,113 @@
+name: Release
+
+# yamllint disable-line rule:truthy
+on:
+  push:
+    branches: [main]
+
+# Least privilege by default; jobs opt into more where needed.
+permissions:
+  contents: read
+
+# Releases must never overlap: a second push waits instead of racing for the tag.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  # ── Full CI on the exact commit being released ───────────────────────────
+  ci:
+    name: CI
+    uses: ./.github/workflows/ci.yml
+
+  # ── Version bump, tag, changelog and GitHub release ──────────────────────
+  release:
+    name: Semantic Release
+    needs: ci
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    outputs:
+      released: ${{ steps.release.outputs.released }}
+      version: ${{ steps.release.outputs.version }}
+      tag: ${{ steps.release.outputs.tag }}
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Semantic release reads the whole history to work out the next version.
+          fetch-depth: 0
+
+      - name: Python Semantic Release
+        id: release
+        uses: python-semantic-release/python-semantic-release@v10.6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  # ── Build the distribution from the released tag ─────────────────────────
+  build:
+    name: Build distribution
+    needs: release
+    if: needs.release.outputs.released == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.release.outputs.tag }}
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.13"
+          enable-cache: true
+
+      - name: Build wheel and sdist
+        run: uv build
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: python-package-distributions
+          path: dist/
+
+  # ── Publish to PyPI via trusted publishing ───────────────────────────────
+  publish-to-pypi:
+    name: Publish to PyPI
+    needs: [release, build]
+    if: needs.release.outputs.released == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/intigriti/
+    permissions:
+      id-token: write
+
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          name: python-package-distributions
+          path: dist/
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
+
+  # ── Attach the built files to the release semantic-release created ───────
+  release-assets:
+    name: Attach assets
+    needs: [release, build]
+    if: needs.release.outputs.released == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          name: python-package-distributions
+          path: dist/
+
+      # `gh release upload` only adds files; it leaves the changelog body alone.
+      - name: Upload distributions to the GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release upload "${{ needs.release.outputs.tag }}" dist/* --clobber

@@ -11,7 +11,15 @@ authors = [{ name = "DonAsako", email = "contact@donasako.fr" }]
 requires-python = ">=3.13"
 license = "MIT"
 license-files = ["LICENSE"]
-keywords = ["intigriti", "bug-bounty", "researcher-api", "api-wrapper", "api-client", "async", "security"]
+keywords = [
+    "intigriti",
+    "bug-bounty",
+    "researcher-api",
+    "api-wrapper",
+    "api-client",
+    "async",
+    "security",
+]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -25,10 +33,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 
-dependencies = [
-    "httpx>=0.28.1",
-    "pydantic>=2.13.4",
-]
+dependencies = ["httpx>=0.28.1", "pydantic>=2.13.4"]
 
 [project.urls]
 Homepage   = "https://github.com/DonAsako/intigriti.py"
@@ -60,6 +65,17 @@ dev = [
     "types-toml",
     "pydantic-settings",
 ]
+
+# ============================================================================
+# SEMANTIC RELEASE
+# ============================================================================
+
+[tool.semantic_release]
+version_toml = ["pyproject.toml:project.version"]
+
+allow_zero_version = true
+major_on_zero      = false
+commit_parser      = "conventional"
 
 # ============================================================================
 # HATCH (build backend)
@@ -200,7 +216,10 @@ inline-quotes    = "single"
 [tool.ruff.lint.flake8-type-checking]
 # Pydantic resolves annotations at runtime to build its validators, so the types its
 # models reference must stay imported at module level rather than under TYPE_CHECKING.
-runtime-evaluated-base-classes = ["pydantic.BaseModel", "intigriti.models._base.IntigritiModel"]
+runtime-evaluated-base-classes = [
+    "pydantic.BaseModel",
+    "intigriti.models._base.IntigritiModel",
+]
 
 [tool.ruff.lint.pycodestyle]
 max-doc-length                = 160
@@ -280,7 +299,7 @@ allow-magic-value-types = ["int", "str", "bytes"]
 # ============================================================================
 
 [tool.mypy]
-python_version     = "3.13"
+python_version = "3.13"
 # Type-checks model constructors and honours frozen models
 plugins            = ["pydantic.mypy"]
 files              = ["intigriti", "tests", "examples"]
@@ -313,9 +332,9 @@ exclude = [
 ]
 
 [tool.pydantic-mypy]
-init_typed           = true
-init_forbid_extra    = true
-warn_untyped_fields  = true
+init_typed          = true
+init_forbid_extra   = true
+warn_untyped_fields = true
 
 # Tests: relax a bit (untyped fixtures, parametrize, etc.)
 [[tool.mypy.overrides]]
