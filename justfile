@@ -10,10 +10,6 @@ install:
     uv sync
     uv run pre-commit install
 
-# Run the CLI entry point
-run:
-    uv run app-cli
-
 # Lint with ruff
 lint:
     uv run ruff check .

@@ -3,34 +3,35 @@ requires      = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "app"
+name = "intigriti"
 version = "0.1.0"
-description = "Add your description here"
+description = "A Python wrapper for the Intigriti API"
 readme = "README.md"
 authors = [{ name = "DonAsako", email = "contact@donasako.fr" }]
 requires-python = ">=3.13"
 license = "MIT"
 license-files = ["LICENSE"]
-keywords = []
+keywords = ["intigriti", "bug-bounty", "api", "api-wrapper", "api-client", "security"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.13",
+    "Topic :: Security",
+    "Topic :: Software Development :: Libraries :: Python Modules",
     "Typing :: Typed",
 ]
 
 dependencies = ["pydantic>=2.13.4"]
 
 [project.urls]
-Homepage   = "https://donasako.fr/"
-Repository = "https://github.com/DonAsako/SimplePythonTemplate"
-Issues     = "https://github.com/DonAsako/SimplePythonTemplate/issues"
-
-[project.scripts]
-app-cli = "app.main:main"
+Homepage   = "https://github.com/DonAsako/intigriti.py"
+Repository = "https://github.com/DonAsako/intigriti.py"
+Issues     = "https://github.com/DonAsako/intigriti.py/issues"
+Changelog  = "https://github.com/DonAsako/intigriti.py/releases"
 
 [dependency-groups]
 dev = [
@@ -62,12 +63,12 @@ dev = [
 # ============================================================================
 
 [tool.hatch.build.targets.sdist]
-include = ["app"]
+include = ["intigriti"]
 
 [tool.hatch.build.targets.wheel]
-include = ["app"]
+include = ["intigriti"]
 # Ship the PEP 561 marker so downstream consumers get our type hints
-artifacts = ["app/py.typed"]
+artifacts = ["intigriti/py.typed"]
 
 # ============================================================================
 # RUFF (linter + formatter)
@@ -268,7 +269,7 @@ allow-magic-value-types = ["int", "str", "bytes"]
 
 [tool.mypy]
 python_version     = "3.13"
-files              = ["app", "tests"]
+files              = ["intigriti", "tests"]
 namespace_packages = true
 pretty             = true
 show_error_codes   = true
@@ -337,7 +338,7 @@ filterwarnings = [
 [tool.coverage.run]
 parallel = true
 branch   = true
-source   = ["app"]
+source   = ["intigriti"]
 omit     = ["**/*_test.py", "**/test_*.py", "**/tests/**"]
 
 [tool.coverage.report]

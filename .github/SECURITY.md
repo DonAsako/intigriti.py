@@ -5,7 +5,7 @@
 Please **do not** open a public issue for security vulnerabilities.
 
 Instead, report them privately via
-[GitHub's private vulnerability reporting](https://github.com/DonAsako/SimplePythonTemplate/security/advisories/new)
+[GitHub's private vulnerability reporting](https://github.com/DonAsako/intigriti.py/security/advisories/new)
 (the **Security → Report a vulnerability** tab), or by email to the maintainer.
 
 Please include:
@@ -19,5 +19,5 @@ informed as we work on a fix and coordinate disclosure.
 
 ## Supported versions
 
-This is a project template; only the latest `main` is supported. Projects
-generated from it are responsible for their own security policy.
+This project is in early development: only the latest release and `main` are
+supported. Please upgrade before reporting an issue.

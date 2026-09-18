@@ -41,7 +41,7 @@ repos:
         entry: uv run --frozen mypy
         language: system
         types_or: [python, pyi]
-        files: ^(app|tests)/
+        files: ^(intigriti|tests)/
         pass_filenames: false
         require_serial: true
 
