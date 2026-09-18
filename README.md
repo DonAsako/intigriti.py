@@ -1,8 +1,11 @@
 # intigriti.py
 
 [![CI](https://github.com/DonAsako/intigriti.py/actions/workflows/ci.yml/badge.svg)](https://github.com/DonAsako/intigriti.py/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/intigriti)](https://pypi.org/project/intigriti/)
 [![Python](https://img.shields.io/badge/python-3.13%2B-blue)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
+> **Unofficial project**, not affiliated with or endorsed by Intigriti.
 
 An async, fully typed Python wrapper for the
 [Intigriti researcher API](https://intigriti-researcher-api.readme.io/) — the API behind a
@@ -36,12 +39,16 @@ Every endpoint of researcher API v1:
 
 ## Installation
 
-Not published on PyPI yet — install from source:
+```sh
+uv add intigriti
+# or
+pip install intigriti
+```
+
+To track unreleased work, install from the repository instead:
 
 ```sh
 uv add git+https://github.com/DonAsako/intigriti.py
-# or
-pip install git+https://github.com/DonAsako/intigriti.py
 ```
 
 ## Usage
@@ -141,17 +148,18 @@ just check      # lint + format-check + typecheck + test (mirrors CI)
 
 ## Tooling
 
-| Tool                                               | Purpose                                                                    |
-| -------------------------------------------------- | -------------------------------------------------------------------------- |
-| [uv](https://docs.astral.sh/uv/)                   | Dependency & virtualenv management                                         |
-| [Hatchling](https://hatch.pypa.io/)                | PEP 517 build backend                                                      |
-| [Ruff](https://docs.astral.sh/ruff/)               | Linter + formatter                                                         |
-| [Mypy](https://mypy.readthedocs.io/)               | Static type checking (strict mode)                                         |
-| [Pytest](https://docs.pytest.org/)                 | Test runner (+ coverage, asyncio, benchmark, xdist, mock, timeout, dotenv) |
-| [pre-commit](https://pre-commit.com/)              | Git hooks orchestration                                                    |
-| [gitlint](https://jorisroovers.github.io/gitlint/) | Conventional Commits enforcement                                           |
-| [GitHub Actions](.github/workflows/ci.yml)         | CI: lint, type-check, tests on every push/PR                               |
-| [just](https://github.com/casey/just)              | Task runner for common dev commands (optional)                             |
+| Tool                                                                       | Purpose                                                                    |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| [uv](https://docs.astral.sh/uv/)                                           | Dependency & virtualenv management                                         |
+| [Hatchling](https://hatch.pypa.io/)                                        | PEP 517 build backend                                                      |
+| [Ruff](https://docs.astral.sh/ruff/)                                       | Linter + formatter                                                         |
+| [Mypy](https://mypy.readthedocs.io/)                                       | Static type checking (strict mode)                                         |
+| [Pytest](https://docs.pytest.org/)                                         | Test runner (+ coverage, asyncio, benchmark, xdist, mock, timeout, dotenv) |
+| [pre-commit](https://pre-commit.com/)                                      | Git hooks orchestration                                                    |
+| [gitlint](https://jorisroovers.github.io/gitlint/)                         | Conventional Commits enforcement                                           |
+| [GitHub Actions](.github/workflows/ci.yml)                                 | CI: lint, type-check, tests on every push/PR                               |
+| [python-semantic-release](https://python-semantic-release.readthedocs.io/) | Version, tag, changelog and PyPI release from the commit history           |
+| [just](https://github.com/casey/just)                                      | Task runner for common dev commands (optional)                             |
 
 ## Layout
 
@@ -171,7 +179,9 @@ just check      # lint + format-check + typecheck + test (mirrors CI)
 ├── tests/
 │   └── unit/
 ├── .github/
-│   ├── workflows/ci.yml    # CI pipeline
+│   ├── workflows/
+│   │   ├── ci.yml          # lint, type-check, tests
+│   │   └── publish-to-pypi.yml  # release, PyPI publish
 │   ├── ISSUE_TEMPLATE/
 │   ├── PULL_REQUEST_TEMPLATE.md
 │   ├── CONTRIBUTING.md
@@ -190,10 +200,6 @@ just check      # lint + format-check + typecheck + test (mirrors CI)
 
 See [CONTRIBUTING.md](.github/CONTRIBUTING.md). Commits follow
 [Conventional Commits](https://www.conventionalcommits.org/) and are validated by `gitlint`.
-
-## Disclaimer
-
-Unofficial project, not affiliated with or endorsed by Intigriti.
 
 ## License
 
