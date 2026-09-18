@@ -97,7 +97,12 @@ class IntigritiRateLimitError(IntigritiPermissionError):
 
 
 class IntigritiNotFoundError(IntigritiAPIError):
-    """Raised when the requested resource does not exist (HTTP 404)."""
+    """Raised when the requested resource does not exist (HTTP 404).
+
+    The API does not document a 404, and the program endpoints answer 403 for an id that
+    is unknown just as for one you may not see, so this maps a status they may never
+    send.
+    """
 
 
 class IntigritiConflictError(IntigritiAPIError):

@@ -15,10 +15,7 @@ class Payout(IntigritiModel):
     next API version.
 
     Attributes:
-        id: Identifier of the payout.
-        amount: Amount awarded.
         status: State of the payout. Its ids are not documented by the API.
-        created_at: When the payout was created.
         paid_at: When the payout was settled, or ``None`` while it is pending.
     """
 

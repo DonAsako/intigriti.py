@@ -114,7 +114,6 @@ class AsyncHTTPClient:
         """Send a request to the API and return the raw response.
 
         Args:
-            method: HTTP verb.
             path: Path relative to the API root, e.g. ``/programs``, or an absolute URL.
             params: Query parameters; ``None`` values are dropped.
             json: Request body, serialised as JSON.

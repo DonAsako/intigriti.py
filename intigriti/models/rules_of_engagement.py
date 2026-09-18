@@ -29,7 +29,6 @@ class RulesOfEngagement(IntigritiModel):
 
     Attributes:
         description: The program's rules, as written by the company.
-        testing_requirements: Machine-readable constraints on testing.
         safe_harbour: Whether the company commits to a safe harbour policy.
     """
 

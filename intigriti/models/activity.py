@@ -14,30 +14,29 @@ from intigriti.models.common import Enumeration
 class Activity(IntigritiModel):
     """What changed in a program.
 
-    The API declares this payload as abstract and documents only its version-change
-    shape, so this model keeps the fields it does not know instead of dropping them:
-    read those through ``model_extra``.
+    The API declares this payload as abstract, and its written documentation covers
+    only the version-change shape. The fields below are the ones the live feed sends;
+    anything else Intigriti adds is kept rather than dropped, and stays readable through
+    ``model_extra``.
 
-    Attributes:
-        from_version_id: Version the program moved away from, on a version change.
-        to_version_id: Version the program moved to, on a version change.
+    Every field is optional because which ones are set depends on the activity type: a
+    new domains or rules-of-engagement version carries the two version ids and no
+    status, a status change carries the two statuses and no version id. Status ids are
+    listed in :class:`intigriti.enums.ProgramStatus`.
     """
 
     model_config = ConfigDict(extra='allow')
 
     from_version_id: UUID | None = None
     to_version_id: UUID | None = None
+    from_status: Enumeration | None = None
+    to_status: Enumeration | None = None
 
 
 class ProgramActivity(IntigritiModel):
     """One event on the program activity feed.
 
-    Attributes:
-        program_id: Program the event belongs to.
-        activity: What changed.
-        type: Kind of event; ids listed in :class:`intigriti.enums.ActivityType`.
-        created_at: When the event was published.
-        following: Whether the researcher follows the program the event belongs to.
+    Ids of ``type`` are listed in :class:`intigriti.enums.ActivityType`.
     """
 
     program_id: UUID

@@ -179,6 +179,16 @@ class TestProgramDetail:
 
         assert detail.rules_of_engagement is None
 
+    def test_domain_description_may_be_null(self) -> None:
+        # The spec declares it required and non-nullable; the live API disagrees.
+        payload = self._payload()
+        payload['domains']['content'][0]['description'] = None
+
+        detail = ProgramDetail.model_validate(payload)
+
+        assert detail.domains.content is not None
+        assert detail.domains.content[0].description is None
+
     def test_withheld_version_content_is_none(self) -> None:
         payload = self._payload()
         payload['domains']['content'] = None
@@ -221,15 +231,29 @@ class TestProgramActivity:
         assert activity.created_at == PUBLISHED_AT
         assert activity.activity.from_version_id == UUID(VERSION_ID)
 
+    def test_status_change_activity_carries_statuses_instead_of_versions(self) -> None:
+        payload = self._payload()
+        payload['activity'] = {'fromStatus': {'id': 4, 'value': 'Suspended'}, 'toStatus': {'id': 3, 'value': 'Open'}}
+        payload['type'] = {'id': 3, 'value': 'New program status available'}
+
+        activity = ProgramActivity.model_validate(payload)
+
+        assert activity.type.id == ActivityType.PROGRAM_STATUS_CHANGED
+        assert activity.activity.to_version_id is None
+        assert activity.activity.from_status is not None
+        assert activity.activity.from_status.id == ProgramStatus.SUSPENDED
+        assert activity.activity.to_status is not None
+        assert activity.activity.to_status.id == ProgramStatus.OPEN
+
     def test_undocumented_activity_shape_is_preserved(self) -> None:
         payload = self._payload()
-        payload['activity'] = {'newStatus': {'id': 4, 'value': 'Suspended'}}
-        payload['type'] = {'id': 3, 'value': 'Program status changed'}
+        payload['activity'] = {'somethingIntigritiAddsLater': 'kept'}
+        payload['type'] = {'id': 4, 'value': 'A type this library predates'}
 
         activity = ProgramActivity.model_validate(payload)
 
         assert activity.activity.from_version_id is None
-        assert activity.activity.model_extra == {'newStatus': {'id': 4, 'value': 'Suspended'}}
+        assert activity.activity.model_extra == {'somethingIntigritiAddsLater': 'kept'}
 
     def test_activity_is_frozen_like_the_other_models(self) -> None:
         with pytest.raises(ValidationError):

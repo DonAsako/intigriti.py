@@ -5,13 +5,13 @@ build-backend = "hatchling.build"
 [project]
 name = "intigriti"
 version = "0.1.0"
-description = "A Python wrapper for the Intigriti API"
+description = "An async, typed Python wrapper for the Intigriti researcher API"
 readme = "README.md"
 authors = [{ name = "DonAsako", email = "contact@donasako.fr" }]
 requires-python = ">=3.13"
 license = "MIT"
 license-files = ["LICENSE"]
-keywords = ["intigriti", "bug-bounty", "api", "api-wrapper", "api-client", "security"]
+keywords = ["intigriti", "bug-bounty", "researcher-api", "api-wrapper", "api-client", "async", "security"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -228,6 +228,10 @@ allow-magic-value-types = ["int", "str", "bytes"]
     "F401", # module-imported-but-unused
     "F403", # undefined-local-with-import-star
 ]
+"examples/**/*.py" = [
+    "INP001", # implicit-namespace-package (examples are standalone scripts)
+    "T20",    # print is the point of an example
+]
 "tests/**/*.py" = [
     "INP001",  # implicit-namespace-package
     "SLF001",  # private-member-access (fine in tests)
@@ -279,7 +283,7 @@ allow-magic-value-types = ["int", "str", "bytes"]
 python_version     = "3.13"
 # Type-checks model constructors and honours frozen models
 plugins            = ["pydantic.mypy"]
-files              = ["intigriti", "tests"]
+files              = ["intigriti", "tests", "examples"]
 namespace_packages = true
 pretty             = true
 show_error_codes   = true

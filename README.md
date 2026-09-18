@@ -4,9 +4,31 @@
 [![Python](https://img.shields.io/badge/python-3.13%2B-blue)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-A Python wrapper for the [Intigriti](https://www.intigriti.com/) API.
+An async, fully typed Python wrapper for the
+[Intigriti researcher API](https://intigriti-researcher-api.readme.io/) — the API behind a
+researcher's personal access token, serving programs, their scope and rules of engagement,
+the program activity feed and payouts.
 
-> **Status:** early development — the client is not implemented yet, the public API will change.
+> **Which API?** This wraps the **researcher** API only, at
+> `https://api.intigriti.com/external/researcher`. Intigriti also runs a separate
+> [company API](https://kb.intigriti.com/en/articles/6117846-intigriti-api) for
+> organisations automating their own programs; it has its own host, authentication and
+> payloads, and is not covered here.
+
+> **Status:** early development — the public API of this library may still change.
+
+## What's covered
+
+Every endpoint of researcher API v1:
+
+| Endpoint                                                        | Method                                                   |
+| --------------------------------------------------------------- | -------------------------------------------------------- |
+| `GET /v1/programs`                                              | `client.programs.list()` · `.iterate()`                  |
+| `GET /v1/programs/{programId}`                                  | `client.programs.get()`                                  |
+| `GET /v1/programs/activities`                                   | `client.programs.activities()` · `.iterate_activities()` |
+| `GET /v1/programs/{programId}/domains/{versionId}`              | `client.programs.domains()`                              |
+| `GET /v1/programs/{programId}/rules-of-engagements/{versionId}` | `client.programs.rules_of_engagement()`                  |
+| `GET /v1/payouts` (BETA)                                        | `client.payouts.list()` · `.iterate()`                   |
 
 ## Requirements
 
@@ -14,21 +36,83 @@ A Python wrapper for the [Intigriti](https://www.intigriti.com/) API.
 
 ## Installation
 
-```sh
-uv add intigriti
-# or
-pip install intigriti
-```
-
-Not published yet — for now, install from source:
+Not published on PyPI yet — install from source:
 
 ```sh
 uv add git+https://github.com/DonAsako/intigriti.py
+# or
+pip install git+https://github.com/DonAsako/intigriti.py
 ```
 
 ## Usage
 
-Coming soon.
+Generate a [personal access token](https://intigriti-researcher-api.readme.io/reference/configuration)
+from your Intigriti account settings, then:
+
+```python
+import asyncio
+import os
+
+import intigriti
+
+
+async def main() -> None:
+    async with intigriti.Client(os.environ["INTIGRITI_TOKEN"]) as client:
+        page = await client.programs.list(status=intigriti.ProgramStatus.OPEN, limit=100)
+        print(f"{page.max_count} programs available")
+
+        # Pages are walked for you; the API serves 50 records at a time by default.
+        async for program in client.programs.iterate(following=True):
+            print(program.handle, program.max_bounty.value, program.max_bounty.currency)
+
+        detail = await client.programs.get(page.records[0].id)
+        for domain in detail.domains.content or []:
+            print(domain.endpoint, domain.tier.value)
+
+
+asyncio.run(main())
+```
+
+The same example, ready to run, lives in
+[`examples/quickstart.py`](examples/quickstart.py):
+
+```sh
+INTIGRITI_TOKEN=xxxxx uv run python examples/quickstart.py
+```
+
+Everything is typed: responses are [Pydantic](https://docs.pydantic.dev/) models with
+snake_case attributes, epoch timestamps decoded to aware `datetime`s and bounties to
+`Decimal`.
+
+### Enumerations
+
+The API returns enumerations as `{"id": 3, "value": "Open"}`. Only the id is contractual,
+so compare against the members of `intigriti.enums` rather than against the label:
+
+```python
+if program.status.id == intigriti.ProgramStatus.OPEN:
+    ...
+```
+
+An id this library does not know is decoded as a plain integer rather than raising, so a
+new program status will not break a running client.
+
+### Errors
+
+Failed requests raise an `IntigritiAPIError` subclass carrying the status, the API error
+code and the identifier to quote when reporting a problem:
+
+```python
+try:
+    await client.programs.get(program_id)
+except intigriti.IntigritiRateLimitError as exc:
+    print("throttled, retry after", exc.retry_after)
+except intigriti.IntigritiAPIError as exc:
+    print(exc.status_code, exc.code, exc.identifier)
+```
+
+Note that Intigriti signals rate limiting with HTTP 403 rather than 429, so
+`IntigritiRateLimitError` inherits from `IntigritiPermissionError`.
 
 ## Development
 
@@ -74,8 +158,16 @@ just check      # lint + format-check + typecheck + test (mirrors CI)
 ```text
 .
 ├── intigriti/              # source package
-│   ├── __init__.py
+│   ├── client.py           # public entry point
+│   ├── enums.py            # documented enumeration ids
+│   ├── exceptions.py       # error hierarchy
+│   ├── models/             # typed response models
+│   ├── resources/          # endpoint groups (programs, payouts)
+│   ├── pagination.py       # limit/offset iteration
+│   ├── _http.py            # async transport
 │   └── py.typed            # PEP 561 marker (ships type hints to consumers)
+├── examples/
+│   └── quickstart.py
 ├── tests/
 │   └── unit/
 ├── .github/

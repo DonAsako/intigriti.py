@@ -1,7 +1,8 @@
-"""intigriti.py — a Python wrapper for the Intigriti API."""
+"""intigriti.py — an async, typed Python wrapper for the Intigriti researcher API."""
 
 from __future__ import annotations
 
+from intigriti.client import Client
 from intigriti.enums import (
     ActivityType,
     ConfidentialityLevel,
@@ -42,13 +43,17 @@ from intigriti.models import (
     Version,
     VersionWithAttachments,
 )
+from intigriti.pagination import DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE
 
 __version__ = '0.1.0'
 
 __all__ = [
+    'DEFAULT_PAGE_SIZE',
+    'MAX_PAGE_SIZE',
     'Activity',
     'ActivityType',
     'Attachment',
+    'Client',
     'ConfidentialityLevel',
     'Domain',
     'DomainTier',

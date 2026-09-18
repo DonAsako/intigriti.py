@@ -11,6 +11,11 @@ These are a convenience, not a whitelist: an id Intigriti adds later is decoded 
 plain integer instead of raising, so a new program status never breaks a running
 client.
 
+The labels are the other reason to match on ids: they already drift from the written
+documentation, which prints ``Invite only`` where the API sends ``InviteOnly``, and
+``Program status changed`` where the activity feed sends ``New program status
+available``.
+
 Ids are documented at https://intigriti-researcher-api.readme.io/reference/program-1.
 """
 
